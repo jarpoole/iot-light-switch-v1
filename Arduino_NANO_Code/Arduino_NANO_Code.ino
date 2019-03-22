@@ -38,6 +38,9 @@ void setup() {
   #ifdef DEBUG
     Serial.begin(hardwareBaudRate);
   #endif
+
+  //
+  pinMode(13,OUTPUT);
   
   motor.attach(motorPWMPin);
   pinMode(motorEnablePin, OUTPUT);
@@ -90,6 +93,9 @@ void update(){
 void turnOn(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(onMicroseconds);
+  
+  digitalWrite(13,HIGH); //Debug
+  
   switchOn = true;
   delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
@@ -103,10 +109,13 @@ void turnOn(){
 void turnOff(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(offMicroseconds);
+  
+  digitalWrite(13,LOW);  //Debug
+  
   switchOn = false;
   delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
-  
+
   if(!checkPos(false)){
     //turnOn();
   }

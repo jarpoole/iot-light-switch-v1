@@ -5,8 +5,8 @@
 #include "Adafruit_MQTT_Client.h"
 
 // WiFi Sign-in information
-#define WLAN_SSID       "Zoo"
-#define WLAN_PASS       "Zooanimals"
+#define WLAN_SSID       "jPoole"
+#define WLAN_PASS       "Hotspots4days"
 
 // Adafruit IO Sign-in information
 #define AIO_SERVER      "io.adafruit.com"
