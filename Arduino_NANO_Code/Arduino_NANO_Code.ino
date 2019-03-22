@@ -6,7 +6,7 @@
 //Interrupt Stuff
 int interruptPin = 2;
 unsigned long volatile lastInterruptTime = 0;
-int minInterruptDelay = 3000;
+int minInterruptDelay = 1500;
 
 //Serial Stuff
 int hardwareBaudRate = 9600;
@@ -29,6 +29,7 @@ int slideResistorPos = 0;
 //Switch state Stuff
 bool switchOn = true;
 bool unprocessedMove = false;
+bool moving = false;
 
 //Button stuff
 int buttonPin = 3;
@@ -72,6 +73,11 @@ void loop() {
 
 void update(){
   if(unprocessedMove){
+
+    #ifdef DEBUG
+      Serial.println("moving");
+    #endif
+    
     if(switchOn){
       turnOff();
     }else{
@@ -84,25 +90,27 @@ void update(){
 void turnOn(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(onMicroseconds);
+  switchOn = true;
   delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
   
   if(!checkPos(true)){
     //turnOff();
   }
-  switchOn = true;
+  
 }
 
 void turnOff(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(offMicroseconds);
+  switchOn = false;
   delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
   
   if(!checkPos(false)){
     //turnOn();
   }
-  switchOn = false;
+  
 }
 
 //True for up/on, false for down/off

@@ -1,4 +1,3 @@
-
 //#define DEBUG 1
 
 #include <ESP8266WiFi.h>
@@ -6,8 +5,8 @@
 #include "Adafruit_MQTT_Client.h"
 
 // WiFi Sign-in information
-#define WLAN_SSID       "jPoole"
-#define WLAN_PASS       "Hotspots4days"
+#define WLAN_SSID       "Zoo"
+#define WLAN_PASS       "Zooanimals"
 
 // Adafruit IO Sign-in information
 #define AIO_SERVER      "io.adafruit.com"
@@ -33,9 +32,9 @@ Adafruit_MQTT_Subscribe OnOff = Adafruit_MQTT_Subscribe(&mqtt, ONOFF_FEED, MQTT_
 int interruptPin = 2;
 
 void setup() {
-  #ifdef DEBUG
+  //#ifdef DEBUG
     Serial.begin(9600);
-  #endif
+  //#endif
   
   pinMode(interruptPin, OUTPUT);
   
@@ -83,7 +82,7 @@ void loop() {
   }
     
   // this is our 'wait for incoming subscription packets' busy subloop
-  while (subscription = mqtt.readSubscription(1000)) {
+  while (subscription = mqtt.readSubscription(10000)) {
 
     // we only care about the OnOff events
     if (subscription == &OnOff) {
