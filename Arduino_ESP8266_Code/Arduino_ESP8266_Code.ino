@@ -1,5 +1,5 @@
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"

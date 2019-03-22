@@ -1,7 +1,12 @@
+
+//#define DEBUG 1
+
 #include "Servo.h"
 
 //Interrupt Stuff
 int interruptPin = 2;
+unsigned long volatile lastInterruptTime = 0;
+int minInterruptDelay = 3000;
 
 //Serial Stuff
 int hardwareBaudRate = 9600;
@@ -13,100 +18,105 @@ int motorPWMPin = 5;
 int motorEnablePin = 6;
 int onMicroseconds = 800;
 int offMicroseconds = 1600;
+int motorMoveTime = 1000;
 
 //Slider Stuff
 int minimumOnPos = 500;      //actual = 566; aggressive = 500; conservative = 490;
-int maximumOffPos = 180;     //actual = 154; aggressive = 180; conservative = 190;
+int maximumOffPos = 180;     //actual = 154; aggressive = 190; conservative = 200;
 int slideResistorPin = A0;
 int slideResistorPos = 0;
 
-//Switch Stuff
+//Switch state Stuff
 bool switchOn = true;
+bool unprocessedMove = false;
+
+//Button stuff
+int buttonPin = 3;
 
 void setup() {
-  Serial.begin(hardwareBaudRate);
-
+  #ifdef DEBUG
+    Serial.begin(hardwareBaudRate);
+  #endif
+  
   motor.attach(motorPWMPin);
   pinMode(motorEnablePin, OUTPUT);
-  
-  //digitalWrite(motorEnablePin, HIGH); //This is used as a global servo enable; Keep disabled by default
 
   pinMode(interruptPin, INPUT);
   attachInterrupt(0, processInterrupt, RISING);
 
+  pinMode(buttonPin, INPUT);
+  attachInterrupt(1, processInterrupt, RISING);
+
+  turnOn();
+
+  //digitalWrite(motorEnablePin, HIGH); //This is used as a global servo enable; Keep disabled by default
 }
 
 void processInterrupt(){
-  Serial.println("Interrupted");
-  if(switchOn){
-    turnOff();
-  }else{
-    turnOn();
+  unsigned long currentMillis = millis();
+  if ((unsigned long)(currentMillis - lastInterruptTime) >= minInterruptDelay) {
+     unprocessedMove = true;
+     lastInterruptTime = currentMillis;
   }
 }
 
 void loop() {
+  #ifdef DEBUG
+    Serial.println("Idle");
+  #endif
   
-  checkPos(true);
-  turnOn();
-  delay(10);
+  delay(100);
+  update();
+  
+}
 
-  checkPos(true);
-  turnOff();
-  delay(10);
-
-
-  /*
-  slideResistorPos = analogRead(slideResistorPin); 
-  Serial.println(slideResistorPos);
-  delay(10);
-  // put your main code here, to run repeatedly:
-  */
-
+void update(){
+  if(unprocessedMove){
+    if(switchOn){
+      turnOff();
+    }else{
+      turnOn();
+    }
+    unprocessedMove = false;
+  }
 }
 
 void turnOn(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(onMicroseconds);
-  delay(1000);
+  delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
+  
+  if(!checkPos(true)){
+    //turnOff();
+  }
   switchOn = true;
 }
 
 void turnOff(){
   digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(offMicroseconds);
-  delay(1000);
+  delay(motorMoveTime);
   digitalWrite(motorEnablePin, LOW);
+  
+  if(!checkPos(false)){
+    //turnOn();
+  }
   switchOn = false;
 }
 
 //True for up/on, false for down/off
 bool checkPos(bool on){
-  updateSlidePos();
-  Serial.print("Slide Pos: ");
-  Serial.println(slideResistorPos);
+  slideResistorPos = analogRead(slideResistorPin);
+
+  #ifdef DEBUG
+    Serial.print("Slide Pos: ");
+    Serial.println(slideResistorPos);
+  #endif
 
   if(on){
     return slideResistorPos > minimumOnPos;
   }else{
     return slideResistorPos < maximumOffPos;
   }
-}
-
-void updateSlidePos(){
-  slideResistorPos = analogRead(slideResistorPin);
-}
-
-void printWifiErrors(){
-/*
-      //ESP Connection errors
-      case 1: Serial.println(F("Wrong protocol")); break;
-      case 2: Serial.println(F("ID rejected")); break;
-      case 3: Serial.println(F("Server unavail")); break;
-      case 4: Serial.println(F("Bad user/pass")); break;
-      case 5: Serial.println(F("Not authed")); break;
-      case 6: Serial.println(F("Failed to subscribe")); break;
-      default: Serial.println(F("Connection failed")); break;
-      */
 }
