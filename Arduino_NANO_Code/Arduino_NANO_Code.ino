@@ -16,13 +16,15 @@ int softwareBaudRate = 9600;
 Servo motor;
 int motorPWMPin = 5;
 int motorEnablePin = 6;
-int onMicroseconds = 800;
-int offMicroseconds = 1600;
-int motorMoveTime = 1000;
+int onMicroseconds = 1800; //up towards battery
+int offMicroseconds = 800; //down towards power plug
+
+unsigned long volatile lastMoveTime = 0;
+int minMoveDelay = 500;
 
 //Slider Stuff
-int minimumOnPos = 500;      //actual = 566; aggressive = 500; conservative = 490;
-int maximumOffPos = 180;     //actual = 154; aggressive = 190; conservative = 200;
+int minimumOffPos = 500;      //actual = 566; aggressive = 500; conservative = 490;
+int maximumOnPos = 180;     //actual = 154; aggressive = 190; conservative = 200;
 int slideResistorPin = A0;
 int slideResistorPos = 0;
 
@@ -38,8 +40,7 @@ void setup() {
   #ifdef DEBUG
     Serial.begin(hardwareBaudRate);
   #endif
-
-  //
+  
   pinMode(13,OUTPUT);
   
   motor.attach(motorPWMPin);
@@ -57,10 +58,12 @@ void setup() {
 }
 
 void processInterrupt(){
-  unsigned long currentMillis = millis();
-  if ((unsigned long)(currentMillis - lastInterruptTime) >= minInterruptDelay) {
-     unprocessedMove = true;
-     lastInterruptTime = currentMillis;
+  if(!moving){
+    unsigned long currentMillis = millis();
+    if ((unsigned long)(currentMillis - lastInterruptTime) >= minInterruptDelay) {
+      unprocessedMove = true;
+      lastInterruptTime = currentMillis;
+    }
   }
 }
 
@@ -75,10 +78,22 @@ void loop() {
 }
 
 void update(){
-  if(unprocessedMove){
 
+  if(moving){
+    unsigned long currentMillis = millis();
+    if ((unsigned long)(currentMillis - lastMoveTime) >= minMoveDelay) {
+      digitalWrite(motorEnablePin, LOW);
+      moving = false;
+      #ifdef DEBUG
+        Serial.println("End Movement");
+      #endif
+    }
+    return;
+
+  }else if(unprocessedMove){
+    switchOn = checkPos(true);
     #ifdef DEBUG
-      Serial.println("moving");
+      Serial.println("Start Movement");
     #endif
     
     if(switchOn){
@@ -91,34 +106,45 @@ void update(){
 }
 
 void turnOn(){
-  digitalWrite(motorEnablePin, HIGH);
   motor.writeMicroseconds(onMicroseconds);
-  
+  digitalWrite(motorEnablePin, HIGH);
+  moving = true;
+ 
   digitalWrite(13,HIGH); //Debug
+
+  lastMoveTime = millis();
   
-  switchOn = true;
-  delay(motorMoveTime);
-  digitalWrite(motorEnablePin, LOW);
+  #ifdef DEBUG
+      Serial.println("Turn on");
+  #endif
   
-  if(!checkPos(true)){
+  //digitalWrite(motorEnablePin, LOW);
+  
+  //if(!checkPos(true)){
     //turnOff();
-  }
+  //}
   
 }
 
 void turnOff(){
-  digitalWrite(motorEnablePin, HIGH);
+  
   motor.writeMicroseconds(offMicroseconds);
+  digitalWrite(motorEnablePin, HIGH);
+  moving = true;
   
   digitalWrite(13,LOW);  //Debug
   
-  switchOn = false;
-  delay(motorMoveTime);
-  digitalWrite(motorEnablePin, LOW);
+  lastMoveTime = millis();
 
-  if(!checkPos(false)){
+  #ifdef DEBUG
+    Serial.println("Turn off");
+  #endif
+
+  //digitalWrite(motorEnablePin, LOW);
+
+  //if(!checkPos(false)){
     //turnOn();
-  }
+  //}
   
 }
 
@@ -132,8 +158,8 @@ bool checkPos(bool on){
   #endif
 
   if(on){
-    return slideResistorPos > minimumOnPos;
+    return slideResistorPos < maximumOnPos;
   }else{
-    return slideResistorPos < maximumOffPos;
+    return slideResistorPos > minimumOffPos;
   }
 }
