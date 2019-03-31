@@ -47,14 +47,11 @@ void setup() {
 
   // Connect to WiFi access point.
   delay(10);
+
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_STA);
   
   WiFi.begin(WLAN_SSID, WLAN_PASS);
-  
-  //while (WiFi.status() != WL_CONNECTED) {
-  //  delay(500);
-  //  ESP.restart();
-  //}
-
       
   #ifdef DEBUG
     while (WiFi.status() != WL_CONNECTED) {
@@ -65,6 +62,13 @@ void setup() {
     Serial.println(F("WiFi connected"));
     Serial.println(F("IP address: "));
     Serial.println(WiFi.localIP());
+  #endif
+  
+  #ifndef DEBUG
+    while (WiFi.status() != WL_CONNECTED) {
+      WiFi.begin(WLAN_SSID, WLAN_PASS);
+      delay(1000);
+    }
   #endif
 
   mqtt.subscribe(&OnOff);
