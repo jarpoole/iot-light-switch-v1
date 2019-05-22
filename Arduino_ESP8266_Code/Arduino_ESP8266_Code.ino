@@ -1,19 +1,19 @@
-#define DEBUG 1
+//#define DEBUG 1
 
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
 // WiFi Sign-in information
-#define WLAN_SSID       "Zoo"
-#define WLAN_PASS       "Zooanimals"
+#define WLAN_SSID       "ssid"
+#define WLAN_PASS       "password"
 
 // Adafruit IO Sign-in information
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883
-#define AIO_USERNAME    "jPoole"
-#define AIO_KEY         "1a88698778da49bcbf8c3425bc5fb84f"
-#define AIO_FEED        "/feeds/digital"
+#define AIO_USERNAME    "username"
+#define AIO_KEY         "aiokey"
+#define AIO_FEED        "/feeds/LightSwitch"
 
 WiFiClient client;
 
