@@ -2,6 +2,8 @@
 
 See V2 ([iot-light-switch-v2](https://github.com/jarpoole/iot-light-switch-v2)) for a second more polished attempt at this concept.
 
+![installed](./docs/installed.jpg)
+
 ## Internals
 
 ![internal1](./docs/internal1.jpg)
