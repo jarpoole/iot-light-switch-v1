@@ -7,8 +7,8 @@ FDP6030BL-ND,MOSFET,Digikey,30v 40A mosfet,2.23,1,2.23
 CKN4080-ND,Activation witch,Digikey,SPST push button switch,2.17,1,2.17
 CKN9565-ND,Programming Switch,Digikey,DPST sliding switch,0.62,1,0.62
 CKN1188-ND,Power Switch,Digikey,SPDT latching push button,1.89,1,1.89
-S7072-ND,Female Header,Digikey,8 pos 0.1" pitch female header,0.95,1,0.95
-S2112EC-40-ND,Male Header,Digikey,8 pos 0.1" x2 pitch male header,2.52,1,2.52
+S7072-ND,Female Header,Digikey,8 pos 0.1 inch pitch female header,0.95,1,0.95
+S2112EC-40-ND,Male Header,Digikey,8 pos 0.1 inch x2 pitch male header,2.52,1,2.52
 36-2463-ND,Battery Holder,Digikey,2x AA battery holder pack,1.72,3,5.16
 EJ508A-ND,Power Port,Digikey,12v male power jack,1.82,1,1.82
 952-2229-ND,Female Header,Digikey,4 pos crimping header,0.27,1,0.27
@@ -20,7 +20,7 @@ EJ508A-ND,Power Port,Digikey,12v male power jack,1.82,1,1.82
 CF14JT10K0CT-ND,10k Resistor,Digikey,10k 1/4W through hole resistor,0.15,1,0.15
 PPC1.10KXCT-ND,1.1k Resistor,Digikey,1.1k 1/4W through hole resistor,0.31,1,0.31
 PTA3043-2010CIB103-ND,Slide Potentiometer,Digikey,Variable linear potentiometer,2.13,1,2.13
-S1111EC-40-ND,Male Header,Digikey,40 pos 0.1" pitch right angle male header,1.32,1,1.32
+S1111EC-40-ND,Male Header,Digikey,40 pos 0.1 inch pitch right angle male header,1.32,1,1.32
 ESP8266,Wi-Fi Module,Amazon,Low lowered Arduino Wi-Fi adapter,14,1,14
 ATmega328P,Arduino Nano,eBay,Arduino compatible microcontroller,5.17,1,5.17
 FT232RL,USB to Serial,eBay,USB to Serial FTDI adapter,3.19,1,3.19
